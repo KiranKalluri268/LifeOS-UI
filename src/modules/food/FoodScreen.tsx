@@ -3,71 +3,43 @@ import { Plus, Droplets } from 'lucide-react'
 import AddFoodSheet from './components/AddFoodSheet'
 import AddLiquidSheet from './components/AddLiquidSheet'
 import HydrationBar from './components/HydrationBar'
+import FoodLogList from './components/FoodLogList'
 import { useDailyLiquids } from './hooks/useDailyLiquids'
+import { useDailyFoodLog } from './hooks/useDailyFoodLog'
 
 export default function FoodScreen() {
   const [foodSheetOpen, setFoodSheetOpen] = useState(false)
   const [liquidSheetOpen, setLiquidSheetOpen] = useState(false)
 
   const liquidSummary = useDailyLiquids()
+  const foodSummary   = useDailyFoodLog()
 
   return (
-    <div style={{ minHeight: '100%', position: 'relative', paddingBottom: '24px' }}>
+    <div style={{ minHeight: '100%', position: 'relative', paddingBottom: '100px' }}>
 
-      {/* ── Hydration bar (always at top) ───────────────────────────────── */}
-      <div style={{ padding: '16px 20px 0' }}>
+      {/* ── Hydration bar ───────────────────────────────────────────────── */}
+      <div style={{ padding: '16px 20px 8px' }}>
         <HydrationBar
           summary={liquidSummary}
           onAdd={() => setLiquidSheetOpen(true)}
         />
       </div>
 
-      {/* ── Food log placeholder (replaced in Stage 2d) ──────────────────── */}
-      <div
-        style={{
-          padding: '24px 20px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '50vh',
-          gap: '12px',
-          textAlign: 'center',
-        }}
-      >
-        <div
-          style={{
-            width: '72px',
-            height: '72px',
-            borderRadius: '20px',
-            background: 'rgba(249,115,22,0.1)',
-            border: '1px solid rgba(249,115,22,0.2)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '32px',
-          }}
-        >
-          🍽️
-        </div>
-        <p style={{ fontSize: '18px', fontWeight: 700, color: '#f1f0f7' }}>
-          Nothing logged yet
-        </p>
-        <p style={{ fontSize: '13px', color: '#6b6884', maxWidth: '220px', lineHeight: 1.5 }}>
-          Tap <strong style={{ color: '#f97316' }}>+</strong> to log food or{' '}
-          <strong style={{ color: '#3b82f6' }}>💧</strong> for a drink
-        </p>
-      </div>
+      {/* ── Food log list (live) ─────────────────────────────────────────── */}
+      <FoodLogList
+        groups={foodSummary.groups}
+        totalCalories={foodSummary.totalCalories}
+        entryCount={foodSummary.entryCount}
+      />
 
       {/* ── FABs ────────────────────────────────────────────────────────── */}
-      {/* Water FAB */}
       <button
         id="add-liquid-fab"
         onClick={() => setLiquidSheetOpen(true)}
         aria-label="Log a drink"
         style={{
           position: 'fixed',
-          bottom: '148px', // stacked above food FAB
+          bottom: '152px',
           right: '20px',
           width: '48px',
           height: '48px',
@@ -88,7 +60,6 @@ export default function FoodScreen() {
         <Droplets size={20} color="#fff" strokeWidth={2} />
       </button>
 
-      {/* Food FAB */}
       <button
         id="add-food-fab"
         onClick={() => setFoodSheetOpen(true)}
@@ -126,12 +97,12 @@ export default function FoodScreen() {
       <AddFoodSheet
         isOpen={foodSheetOpen}
         onClose={() => setFoodSheetOpen(false)}
-        onSaved={() => console.info('[FoodScreen] food entry saved')}
+        onSaved={() => setFoodSheetOpen(false)}
       />
       <AddLiquidSheet
         isOpen={liquidSheetOpen}
         onClose={() => setLiquidSheetOpen(false)}
-        onSaved={() => console.info('[FoodScreen] liquid entry saved')}
+        onSaved={() => setLiquidSheetOpen(false)}
       />
     </div>
   )
