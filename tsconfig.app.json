@@ -21,9 +21,7 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
 
-    /* Path aliases */
-    "ignoreDeprecations": "6.0",
-    "baseUrl": ".",
+    /* Path aliases — TS 5.0+ supports paths without baseUrl in bundler mode */
     "paths": {
       "@/*": ["./src/*"]
     }
