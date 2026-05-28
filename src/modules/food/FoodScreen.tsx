@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Plus, Droplets } from 'lucide-react'
 import AddFoodSheet from './components/AddFoodSheet'
 import AddLiquidSheet from './components/AddLiquidSheet'
-import HydrationBar from './components/HydrationBar'
+import DailySummaryCard from './components/DailySummaryCard'
 import FoodLogList from './components/FoodLogList'
 import { useDailyLiquids } from './hooks/useDailyLiquids'
 import { useDailyFoodLog } from './hooks/useDailyFoodLog'
@@ -17,11 +17,12 @@ export default function FoodScreen() {
   return (
     <div style={{ minHeight: '100%', position: 'relative', paddingBottom: '100px' }}>
 
-      {/* ── Hydration bar ───────────────────────────────────────────────── */}
-      <div style={{ padding: '16px 20px 8px' }}>
-        <HydrationBar
-          summary={liquidSummary}
-          onAdd={() => setLiquidSheetOpen(true)}
+      {/* ── Daily summary card (hero) ────────────────────────────────────── */}
+      <div style={{ padding: '16px 16px 8px' }}>
+        <DailySummaryCard
+          foodSummary={foodSummary}
+          liquidSummary={liquidSummary}
+          onAddLiquid={() => setLiquidSheetOpen(true)}
         />
       </div>
 
