@@ -29,8 +29,7 @@ export function useMonthlyTransactions(): MonthlyTransactionSummary {
       db.transactions
         .where('date')
         .startsWith(month)
-        .reverse()
-        .sortBy('date'),
+        .toArray(),
     [month],
     []
   )

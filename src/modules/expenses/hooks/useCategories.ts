@@ -7,10 +7,13 @@ export type { Category }
 /**
  * Returns all categories (default + custom) sorted by name.
  * Reactive — updates instantly when a category is added/removed.
+ * Note: 'name' is not a Dexie index so we sort in JS after fetch.
  */
 export function useCategories(): Category[] {
   return useLiveQuery(
-    () => db.categories.orderBy('name').toArray(),
+    () => db.categories.toArray().then((cats) =>
+      cats.slice().sort((a, b) => a.name.localeCompare(b.name))
+    ),
     [],
     []
   )
