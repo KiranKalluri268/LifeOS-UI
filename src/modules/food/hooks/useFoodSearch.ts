@@ -16,7 +16,7 @@ function parseServingSize(raw?: string): { size: number; unit: 'g' | 'ml' } {
   }
 }
 
-function normaliseProduct(p: OFFRawProduct): OFFSearchResult | null {
+export function normaliseProduct(p: OFFRawProduct): OFFSearchResult | null {
   const name = (p.product_name ?? '').trim()
   if (!name) return null
 
@@ -41,6 +41,24 @@ function normaliseProduct(p: OFFRawProduct): OFFSearchResult | null {
     servingSize: size,
     servingUnit: unit,
     imageUrl: p.image_front_small_url,
+  }
+}
+
+/**
+ * Look up a product from the Open Food Facts API using a barcode.
+ */
+export async function fetchProductByBarcode(barcode: string): Promise<OFFSearchResult | null> {
+  const url = `https://world.openfoodfacts.org/api/v2/product/${barcode}.json?fields=code,product_name,brands,nutriments,serving_size,image_front_small_url`
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`OFF API error: ${res.status}`)
+    const data = await res.json()
+    // OFF API returns status 1 if found, status_verbose: "product found"
+    if (data.status !== 1 && data.status !== '1') return null
+    return normaliseProduct(data.product)
+  } catch (err) {
+    console.error('Barcode lookup failed:', err)
+    throw err
   }
 }
 

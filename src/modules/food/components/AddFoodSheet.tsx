@@ -1,10 +1,11 @@
 import { useState, useCallback } from 'react'
-import { Search, ArrowLeft, Check } from 'lucide-react'
+import { Search, ArrowLeft, Check, Camera } from 'lucide-react'
 import BottomSheet from '@/components/BottomSheet'
 import MealTypeSelector, { getDefaultMealType } from './MealTypeSelector'
 import FoodSearchResults from './FoodSearchResults'
 import MacroEditor from './MacroEditor'
 import { useFoodSearch } from '../hooks/useFoodSearch'
+import BarcodeScanner from './BarcodeScanner'
 import {
   EMPTY_DRAFT,
   computeTotals,
@@ -31,11 +32,18 @@ export default function AddFoodSheet({
   initialMealType,
 }: AddFoodSheetProps) {
   const [step, setStep] = useState<SheetStep>('search')
+  const [isScanning, setIsScanning] = useState(false)
   const [draft, setDraft] = useState<FoodEntryDraft>({
     ...EMPTY_DRAFT,
     mealType: initialMealType ?? getDefaultMealType(),
   })
   const [isSaving, setIsSaving] = useState(false)
+
+  const handleScanSuccess = useCallback((result: OFFSearchResult) => {
+    setIsScanning(false)
+    setDraft(draftFromSearchResult(result, draft.mealType))
+    setStep('form')
+  }, [draft.mealType])
 
   const { query, setQuery, results, isLoading, error, clearResults } = useFoodSearch()
 
@@ -105,7 +113,8 @@ export default function AddFoodSheet({
   const sheetTitle = step === 'search' ? 'Log Food' : draft.foodName || 'Edit Entry'
 
   return (
-    <BottomSheet
+    <>
+      <BottomSheet
       isOpen={isOpen}
       onClose={handleClose}
       title={sheetTitle}
@@ -121,43 +130,67 @@ export default function AddFoodSheet({
         {/* ── STEP: Search ───────────────────────────────────────────────── */}
         {step === 'search' && (
           <>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                padding: '0 12px',
-                borderRadius: '12px',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
-              }}
-            >
-              <Search size={16} color="#6b6884" strokeWidth={2} />
-              <input
-                autoFocus
-                type="text"
-                placeholder="Search food (e.g. banana, amul butter…)"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div
                 style={{
                   flex: 1,
-                  padding: '12px 0',
-                  background: 'transparent',
-                  border: 'none',
-                  outline: 'none',
-                  fontSize: '15px',
-                  color: '#f1f0f7',
-                  fontFamily: 'inherit',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '0 12px',
+                  borderRadius: '12px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
                 }}
-              />
-              {query && (
-                <button
-                  onClick={() => setQuery('')}
-                  style={{ background: 'none', border: 'none', color: '#6b6884', cursor: 'pointer', fontSize: '18px', lineHeight: 1 }}
-                >
-                  ×
-                </button>
-              )}
+              >
+                <Search size={16} color="#6b6884" strokeWidth={2} />
+                <input
+                  autoFocus
+                  type="text"
+                  placeholder="Search food (e.g. banana, amul butter…)"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  style={{
+                    flex: 1,
+                    padding: '12px 0',
+                    background: 'transparent',
+                    border: 'none',
+                    outline: 'none',
+                    fontSize: '15px',
+                    color: '#f1f0f7',
+                    fontFamily: 'inherit',
+                  }}
+                />
+                {query && (
+                  <button
+                    onClick={() => setQuery('')}
+                    style={{ background: 'none', border: 'none', color: '#6b6884', cursor: 'pointer', fontSize: '18px', lineHeight: 1 }}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsScanning(true)}
+                style={{
+                  height: '45px',
+                  width: '45px',
+                  borderRadius: '12px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#f97316',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+                aria-label="Scan barcode"
+                title="Scan barcode"
+              >
+                <Camera size={18} strokeWidth={2} />
+              </button>
             </div>
 
             <FoodSearchResults
@@ -276,6 +309,14 @@ export default function AddFoodSheet({
           </>
         )}
       </div>
-    </BottomSheet>
+      </BottomSheet>
+
+      {isScanning && (
+        <BarcodeScanner
+          onScanSuccess={handleScanSuccess}
+          onClose={() => setIsScanning(false)}
+        />
+      )}
+    </>
   )
 }
