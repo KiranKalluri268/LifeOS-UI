@@ -1,11 +1,16 @@
+import { useState, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import AppShell from '@/components/AppShell'
 import FoodScreen from '@/modules/food/FoodScreen'
 import ExpensesScreen from '@/modules/expenses/ExpensesScreen'
 import TimeScreen from '@/modules/time/TimeScreen'
 import InsightsScreen from '@/modules/insights/InsightsScreen'
+import AuthScreen from '@/modules/auth/AuthScreen'
+import { useSyncEngine } from '@/hooks/useSyncEngine'
 
-export default function App() {
+function AuthenticatedApp() {
+  useSyncEngine()
+  
   return (
     <Routes>
       <Route element={<AppShell />}>
@@ -19,4 +24,19 @@ export default function App() {
       </Route>
     </Routes>
   )
+}
+
+export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) setIsAuthenticated(true)
+  }, [])
+
+  if (!isAuthenticated) {
+    return <AuthScreen onAuthSuccess={() => setIsAuthenticated(true)} />
+  }
+
+  return <AuthenticatedApp />
 }

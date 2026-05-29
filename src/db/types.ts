@@ -114,6 +114,7 @@ export interface Category {
   color: string
   isDefault: boolean
   createdAt: string
+  syncStatus?: SyncStatus
 }
 
 /** Monthly budget target per category */
