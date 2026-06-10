@@ -69,31 +69,66 @@ export default function AppShell() {
             transition: 'background 0.3s ease',
           }}
         />
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-          <span
-            style={{
-              fontSize: '22px',
-              fontWeight: 800,
-              letterSpacing: '-0.5px',
-              backgroundImage: `linear-gradient(135deg, #f1f0f7, ${header.color})`,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              transition: 'background-image 0.3s ease',
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+            <span
+              style={{
+                fontSize: '22px',
+                fontWeight: 800,
+                letterSpacing: '-0.5px',
+                backgroundImage: `linear-gradient(135deg, #f1f0f7, ${header.color})`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                transition: 'background-image 0.3s ease',
+              }}
+            >
+              {header.title}
+            </span>
+            <span
+              style={{
+                fontSize: '13px',
+                fontWeight: 500,
+                color: '#6b6884',
+                letterSpacing: '0.01em',
+              }}
+            >
+              {header.subtitle}
+            </span>
+          </div>
+
+          <button
+            onClick={() => {
+              localStorage.removeItem('token')
+              localStorage.removeItem('lastSync')
+              window.location.reload()
             }}
-          >
-            {header.title}
-          </span>
-          <span
+            title="Sign out"
             style={{
-              fontSize: '13px',
-              fontWeight: 500,
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '8px',
+              padding: '6px 10px',
               color: '#6b6884',
-              letterSpacing: '0.01em',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              transition: 'all 0.15s',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.color = '#ef4444'
+              ;(e.currentTarget as HTMLElement).style.borderColor = 'rgba(239,68,68,0.3)'
+              ;(e.currentTarget as HTMLElement).style.background = 'rgba(239,68,68,0.06)'
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.color = '#6b6884'
+              ;(e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)'
+              ;(e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'
             }}
           >
-            {header.subtitle}
-          </span>
+            Sign out
+          </button>
         </div>
       </header>
 

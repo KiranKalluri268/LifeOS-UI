@@ -91,5 +91,10 @@ export class LifeOSDatabase extends Dexie {
       // One row per user
       user_settings: '++id, &userId',
     })
+
+    // v2: add syncStatus index to categories so sync engine can query pending items
+    this.version(2).stores({
+      categories: '++id, userId, isDefault, syncStatus',
+    })
   }
 }
