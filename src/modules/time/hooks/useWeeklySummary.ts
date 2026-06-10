@@ -32,7 +32,7 @@ export function useWeeklySummary(): WeeklySummary {
         .between(startDate, endDate, true, true)
         .toArray(),
     [startDate, endDate],
-    []
+    [] as import('@/db/types').ActivityLog[]
   )
 
   const sleepLogs = useLiveQuery(
@@ -42,7 +42,7 @@ export function useWeeklySummary(): WeeklySummary {
         .between(startDate, endDate, true, true)
         .toArray(),
     [startDate, endDate],
-    []
+    [] as import('@/db/types').SleepLog[]
   )
 
   return useMemo(() => {
@@ -62,7 +62,7 @@ export function useWeeklySummary(): WeeklySummary {
     }
 
     // Sleep average
-    const sleepTotalMins = sleepLogs.reduce((acc, s) => acc + s.durationMins, 0)
+    const sleepTotalMins = sleepLogs.reduce<number>((acc, s) => acc + s.durationMins, 0)
     const avgSleepMins = sleepLogs.length > 0 ? Math.round(sleepTotalMins / sleepLogs.length) : null
 
     const days: WeekDayData[] = []

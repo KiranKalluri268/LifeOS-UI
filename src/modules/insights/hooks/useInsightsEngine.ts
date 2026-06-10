@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/db'
 import type { InsightCard, WeeklyDigestData } from '../insights.types'
+import type { ActivityLog, SleepLog, FoodLog, Transaction, Category, UserSettings } from '@/db/types'
 
 // ── Date helpers (local to avoid circular imports) ───────────────────────────
 
@@ -36,36 +37,36 @@ export function useInsightsEngine(): InsightsEngineResult {
 
   const activityLogs = useLiveQuery(
     () => db.activity_logs.where('date').between(start14, end, true, true).toArray(),
-    [start14, end], []
+    [start14, end], [] as ActivityLog[]
   )
   const sleepLogs = useLiveQuery(
     () => db.sleep_logs.where('date').between(start14, end, true, true).toArray(),
-    [start14, end], []
+    [start14, end], [] as SleepLog[]
   )
   const foodLogs = useLiveQuery(
     () => db.food_logs.where('date').between(start7, end, true, true).toArray(),
-    [start7, end], []
+    [start7, end], [] as FoodLog[]
   )
   const transactions = useLiveQuery(
     () => db.transactions.where('date').between(start14, end, true, true).toArray(),
-    [start14, end], []
+    [start14, end], [] as Transaction[]
   )
   const categories = useLiveQuery(
     () => db.categories.toArray(),
-    [], []
+    [], [] as Category[]
   )
   const settings = useLiveQuery(
     () => db.user_settings.toArray().then(r => r[0] ?? null),
-    [], null
+    [], null as UserSettings | null
   )
 
   const result = useMemo(() => {
     const days7 = last7Days()
-    const catMap = new Map(categories.map(c => [c.id!, c]))
+    const catMap = new Map(categories.map(c => [c.id!, c] as [number, Category]))
 
     // ── Per-day aggregates (14 days) ──────────────────────────────────────────
 
-    const sleepByDate   = new Map(sleepLogs.map(s => [s.date, s]))
+    const sleepByDate   = new Map(sleepLogs.map(s => [s.date, s] as [string, SleepLog]))
     const actByDate     = new Map<string, { deep: number; shallow: number; exercise: boolean; total: number }>()
     const foodByDate    = new Map<string, { cals: number; protein: number }>()
     const spendByDate   = new Map<string, number>()
