@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useOnline } from './useOnline'
 import { db } from '@/db'
 
-const API_URL = 'http://localhost:3001/api/sync'
+const API_URL = (import.meta.env.VITE_API_URL ?? 'http://localhost:5000') + '/api/sync'
 
 export function useSyncEngine() {
   const isOnline = useOnline()

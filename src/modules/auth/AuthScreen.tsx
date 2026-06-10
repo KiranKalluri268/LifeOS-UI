@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const API_URL = 'http://localhost:3001/api/auth'
+const API_URL = (import.meta.env.VITE_API_URL ?? 'http://localhost:5000') + '/api/auth'
 
 export default function AuthScreen({ onAuthSuccess }: { onAuthSuccess: () => void }) {
   const [isLogin, setIsLogin] = useState(true)
